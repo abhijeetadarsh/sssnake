@@ -1,3 +1,9 @@
 tmp
 .vscode
-main
+
+*.exe
+*.out
+*.obj
+*.o
+*.s
+*.i
