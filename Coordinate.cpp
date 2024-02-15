@@ -3,10 +3,12 @@
 
 class Coordinate {
  public:
-  int h, w;
+  short h, w;
   bool operator==(Coordinate a) { return (a.h == h && a.w == w); }
-  Coordinate(int h, int w) x(h), y(w) {}
-  Coordinate operator+(Coordinate dir) { return { h + dir.h, x + dir.w + w }; }
+  Coordinate() = default;
+  Coordinate(short h, short w) : h(h), w(w) {}
+  Coordinate operator+(const Coordinate dir) const { return { static_cast<short>(h + dir.h), static_cast<short>(dir.w + w) }; }
+  Coordinate operator+=(const Coordinate dir) { h += dir.h, w += dir.w; return *this; }
   
 };
 
