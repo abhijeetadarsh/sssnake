@@ -1,7 +1,13 @@
 CXXFLAGS = -lcurses
+CC = g++
 
-run: main
-	./main
+Main: *.cpp
+	$(CC) $(CXXFLAGS) Main.cpp -o Main
+
+run: Main
+	./Main
 
 clean:
-	rm main
+	rm Main
+
+.PHONY: clean
