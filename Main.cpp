@@ -10,7 +10,7 @@ int main() {
   start_color();
   curs_set(0);
   cbreak();
-  // noecho();
+  noecho();
 
   go::initialize_color_pairs();
   

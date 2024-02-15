@@ -17,8 +17,8 @@
 
 class Game {
   GameWindow _m_window;
-  Snake _m_snake;
   Map _m_map;
+  Snake _m_snake;
   
   
   // timeval _m_last_write_time;

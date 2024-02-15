@@ -76,12 +76,12 @@ public:
     case 's':
       return Input::DOWN;
     case KEY_LEFT:
-    case 'L':
-    case 'l':
+    case 'A':
+    case 'a':
       return Input::LEFT;
     case KEY_RIGHT:
-    case 'R':
-    case 'r':
+    case 'D':
+    case 'd':
       return Input::RIGHT;
     case '-':
       return Input::DECREMENT_LENGTH;
