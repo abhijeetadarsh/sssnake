@@ -4,11 +4,12 @@
 class Coordinate {
  public:
   short h, w;
-  bool operator==(Coordinate a) { return (a.h == h && a.w == w); }
   Coordinate() = default;
   Coordinate(short h, short w) : h(h), w(w) {}
-  Coordinate operator+(const Coordinate dir) const { return { static_cast<short>(h + dir.h), static_cast<short>(dir.w + w) }; }
-  Coordinate operator+=(const Coordinate dir) { h += dir.h, w += dir.w; return *this; }
+  Coordinate operator+(const Coordinate rhs) const { return { static_cast<short>(h + rhs.h), static_cast<short>(rhs.w + w) }; }
+  Coordinate operator+=(const Coordinate rhs) { h += rhs.h, w += rhs.w; return *this; }
+  bool operator==(const Coordinate rhs) { return (h == rhs.h && w == rhs.w); }
+  bool operator!=(const Coordinate rhs) { return !(operator==(rhs)); }
   
 };
 

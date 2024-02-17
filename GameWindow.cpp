@@ -100,10 +100,10 @@ public:
       ret = Input::RIGHT;
       break;
     case '-':
-      ret = Input::DECREMENT_LENGTH;
+      ret = Input::DEC_LEN;
       break;
     case '=':
-      ret = Input::INCREMENT_LENGTH;
+      ret = Input::INC_LEN;
       break;
     case '1':
       ret = Input::SPEED_1;
@@ -117,7 +117,6 @@ public:
     case ' ':
       ret = Input::PLAY__PAUSE;
       break;
-    
     default:
       ret = Input::NONE;
       break;

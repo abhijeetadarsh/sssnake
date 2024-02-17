@@ -21,6 +21,22 @@ class Game {
   Snake _m_snake;
 
   GameConfig _m_config;
+  bool _mf_dec_len { false };
+  bool _mf_inc_len { false };
+  bool _mf_pause { false };
+  
+
+  void _m_update__trim_snake_body(const Coordinate _till)
+  {
+    while(_m_snake.tail() != _till)
+    {
+      Coordinate tail = _m_snake.tail();
+      _m_map.at(tail) = go::GameObject_T::NONE;
+      _m_window.set_pixel(tail, go::GameObject_T::NONE);
+      _m_snake.pop_tail();
+    }
+  }
+
 
 public:
   Game(GameWindow window, Map map) : _m_window(window), _m_map(map), _m_snake{ map.generate_snake_and_direction() } {}
@@ -38,63 +54,112 @@ public:
   
   void start() {
     while(true) { // game logic
-      update(_m_window.input());
+      _m_handle_input(_m_window.input());
+      update();
       _m_window.refresh();
-      usleep(30000);
+      usleep(60000);
     }
   }
-  void update(const Input input)
+  void update()
   {
     if(!_m_config._m_clock.tick())
     {
-      if(input != Input::NONE) { printw("@"); refresh(); _m_window.replay_last_input(); }
+      // if(input != Input::NONE) { /*printw("@"); refresh(); */ _m_window.replay_last_input(); }
       return;
     }
 
-    if(_m_config.is_paused())
+    if(_m_config.is_paused() || _mf_pause)
     {
-      if(input == Input::PLAY__PAUSE) {
-        _m_config.toggle_play_pause();
-      }
+      // if(input == Input::PLAY__PAUSE) {
+      //   _m_config.toggle_play_pause();
+      // }
 
       return;
     }
 
-    if(is_one_of(input, Input::UP, Input::DOWN, Input::LEFT, Input::RIGHT)) {
-      change_direction(input);
-    }
+    // if(is_one_of(input, Input::UP, Input::DOWN, Input::LEFT, Input::RIGHT)) {
+    //   _m_change_direction(input);
+    // }
     // else 
     const Coordinate next = _m_snake.next();
 
-    if(!_m_map.is_valid(next) || is_one_of(_m_map.at(next), go::GameObject_T::SNAKE_BODY, go::GameObject_T::OBSTACLE)) {
+    if(!_m_map.is_valid(next)) {
       game_over();
       return;
     }
-    
-    _m_snake.push_head(next);
-    _m_window.set_pixel(next, go::GameObject_T::SNAKE_BODY);
 
-    if(_m_map.at(next) == go::GameObject_T::NONE)
+    switch(_m_map.at(next))
+    {
+    case go::GameObject_T::SNAKE_BODY:
+      // printw("!");
+      // refresh();
+      _m_update__trim_snake_body(next);
+      break;
+    default:
+      break;
+    }
+    
+    if(!_mf_inc_len)
     {
       _m_window.set_pixel(_m_snake.tail(), go::GameObject_T::NONE);
       _m_map.at(_m_snake.tail()) = go::GameObject_T::NONE;
       _m_snake.pop_tail();
-    } 
+    }
+    
+    if(_mf_dec_len && _m_snake.length() > 1)
+    {
+      _m_window.set_pixel(_m_snake.tail(), go::GameObject_T::NONE);
+      _m_map.at(_m_snake.tail()) = go::GameObject_T::NONE;
+      _m_snake.pop_tail();
+    }
+
+    _m_snake.push_head(next);
+    _m_map.at(next) = go::GameObject_T::SNAKE_BODY;
+    _m_window.set_pixel(next, go::GameObject_T::SNAKE_BODY);
+
+
+    _mf_inc_len = false;
+    _mf_dec_len = false;
   }
+
   void game_over()
   {
     wprintw(_m_window.tw.win, "GAME OVER!");
     wrefresh(_m_window.tw.win);
     exit(0);
   }
-  void handle_input(Input input)
+  void _m_handle_input(Input input)
   {
+    if(_mf_pause)
+    {
+      if(input == Input::PLAY__PAUSE) { _mf_pause = (_mf_pause ? false : true); }
+      return;
+    }
+
     if(is_one_of(input, Input::LEFT, Input::RIGHT, Input::UP, Input::DOWN))
     {
-      change_direction(input);
+      _m_change_direction(input);
+      return;
     }
+
+    switch(input)
+    {
+    case Input::INC_LEN:
+      _mf_inc_len = true;
+      break;
+    case Input::DEC_LEN:
+      _mf_dec_len = true;
+      break;
+    case Input::PLAY__PAUSE:
+      _mf_pause = (_mf_pause ? false : true); 
+      break;
+    default:
+      break;
+    }
+    
+    
   }
-  void change_direction(Input input)
+  void _m_change_direction(Input input)
   {
     Coordinate final_direction;
 
