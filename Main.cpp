@@ -3,9 +3,7 @@
 #include "Game.cpp"
 
 int main() {
-  // setlocale(LC_ALL, "utf8");
-  // std::setlocale(LC_ALL, nullptr);
-  // printf("👀");
+
   initscr();
   start_color();
   curs_set(0);

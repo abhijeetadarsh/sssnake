@@ -10,24 +10,24 @@
 
 class Map
 {
-  short height, width;
+  short _m_height, _m_width;
   std::vector<std::vector<go::GameObject_T>> grid;
 
 public:
-  Map(Coordinate dim) : height { dim.h }, width { dim.w }, grid(height, std::vector<go::GameObject_T> (width)) {}
+  Map(Coordinate dim) : _m_height { dim.h }, _m_width { dim.w }, grid(_m_height, std::vector<go::GameObject_T> (_m_width)) {}
   go::GameObject_T& at(const Coordinate c) { return grid[c.h][c.w]; }
   
   Snake generate_snake_and_direction()
   {
     Snake s { Right };
-    constexpr short length = 10;
-    printf("%d, %d\n", length, width - 1);
-    assert(length < width - 1);
-    s.push_head({ static_cast<short>(height / 2), static_cast<short>((width - length) / 2) });
+    constexpr short length = 40;
+    // printf("%d, %d\n", length, width - 1);
+    assert(length < _m_width - 1);
+    s.push_head({ static_cast<short>(_m_height / 2), static_cast<short>((_m_width - length) / 2) });
     for(short i_len = 1; i_len < length; i_len++) { s.push_head(s.next()); }
     return s;
   }
-  bool is_valid(const Coordinate c) { return (0 <= c.h && c.h < height && 0 <= c.w && c.w < width); }
+  bool is_valid(const Coordinate c) { return (0 <= c.h && c.h < _m_height && 0 <= c.w && c.w < _m_width); }
 };
 
 #endif

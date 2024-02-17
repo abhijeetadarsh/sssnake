@@ -6,7 +6,7 @@
 
 namespace go
 {
-  enum class GameObject_T : char { None = 0, Food, Obstacle, SnakeBody };
+  enum class GameObject_T : char { NONE = 0, FOOD, OBSTACLE, SNAKE_HEAD, SNAKE_TAIL, SNAKE_BODY };
 
   // std::map<GameObject_T
 
@@ -20,9 +20,9 @@ namespace go
   
   void initialize_color_pairs()
   {
-    init_pair(static_cast<short>(GameObject_T::None), COLOR_BLACK, COLOR_BLACK);
+    init_pair(static_cast<short>(GameObject_T::NONE), COLOR_BLACK, COLOR_BLACK);
     // init_pair(static_cast<short>(GameObject_T::Food), COLOR_WHITE, )
-    init_pair(static_cast<short>(GameObject_T::SnakeBody), COLOR_RED, COLOR_RED);
+    init_pair(static_cast<short>(GameObject_T::SNAKE_BODY), COLOR_RED, COLOR_RED);
   }
 }
 
