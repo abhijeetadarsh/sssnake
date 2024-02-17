@@ -7,7 +7,7 @@
 #include "Coordinate.cpp"
 #include "GameObject_T.cpp"
 #include "Input.cpp"
-#include "Clock.cpp"
+#include "ClockGuard.cpp"
 
 class GameWindow {
 public:
@@ -24,14 +24,17 @@ public:
   } tw;
 
   short _m_height, _m_width;
-  Clock _m_clock__input, _m_clock__display;
+  ClockGuard _m_clock__input, _m_clock__display;
+
+  Input _m_last_input { Input::NONE };
+  bool _m_replay_last_input{ false };
 
 public:
   GameWindow() :
   _m_height{ static_cast<short>(tw._m_height - 2) },
   _m_width{ static_cast<short>(tw._m_width / 2 - 2) },
-  _m_clock__input{ 16667 },
-  _m_clock__display{ 16667 } {}
+  _m_clock__input{ 166667 },
+  _m_clock__display{ 166667 } {}
 
   Coordinate dimensions() { return { _m_height, _m_width }; }
   
@@ -42,10 +45,10 @@ public:
 
     switch(type)
     {
-      case go::GameObject_T::SnakeBody:
+      case go::GameObject_T::SNAKE_BODY:
         waddstr(tw.win, go::jmp_table[3]);
         break;
-      case go::GameObject_T::None:
+      case go::GameObject_T::NONE:
         waddstr(tw.win, go::jmp_table[0]);
       break;
     }
@@ -63,43 +66,68 @@ public:
   Input input()
   {
     if(!_m_clock__input.tick()) { return Input::NONE; }
+    
+    if(_m_replay_last_input)
+    {
+      _m_replay_last_input = false;
+      return _m_last_input;
+    }
+    
     int input = wgetch(tw.win);
+    
+    Input ret;
     
     switch(input)
     {
     case KEY_UP:
     case 'W':
     case 'w':
-      return Input::UP;
+      ret =  Input::UP;
+      break;
     case KEY_DOWN:
     case 'S':
     case 's':
-      return Input::DOWN;
+      ret = Input::DOWN;
+      break;
     case KEY_LEFT:
     case 'A':
     case 'a':
-      return Input::LEFT;
+      ret = Input::LEFT;
+      break;
     case KEY_RIGHT:
     case 'D':
     case 'd':
-      return Input::RIGHT;
+      ret = Input::RIGHT;
+      break;
     case '-':
-      return Input::DECREMENT_LENGTH;
+      ret = Input::DECREMENT_LENGTH;
+      break;
     case '=':
-      return Input::INCREMENT_LENGTH;
+      ret = Input::INCREMENT_LENGTH;
+      break;
     case '1':
-      return Input::SPEED_1;
+      ret = Input::SPEED_1;
+      break;
     case '2':
-      return Input::SPEED_2;
+      ret = Input::SPEED_2;
+      break;
     case '3':
-      return Input::SPEED_3;
+      ret = Input::SPEED_3;
+      break;
     case ' ':
-      return Input::PLAY__PAUSE;
+      ret = Input::PLAY__PAUSE;
+      break;
     
     default:
-      return Input::NONE;
+      ret = Input::NONE;
+      break;
     }
+    
+    _m_last_input = ret;
+    return ret;
   }
+
+  void replay_last_input() { _m_replay_last_input = true; }
 };
 
 #endif
